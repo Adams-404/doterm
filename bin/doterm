@@ -109,10 +109,11 @@ preview() {
 }
 
 theme() {
-    local name="${1:-}"
-    local file key value current="" selected=""
+    local name="${1:-}" file key value current="" choice answer
+    local temp_dir="" had_colors=0
     local -a files=() names=()
-    local choice answer
+    local -a required=(background foreground cursor color0 color1 color2 color3 color4 color5 color6 color7 color8 color9 color10 color11 color12 color13 color14 color15)
+    local -A values=()
 
     for file in "$DATA"/themes/*.properties; do
         [ -f "$file" ] || continue
@@ -130,50 +131,37 @@ theme() {
             echo "Usage: doterm theme NAME"
             return 0
         fi
-
         echo "Doterm theme picker"
-        if [ -n "$current" ]; then
-            echo "Active theme: $current"
-        else
-            echo "Active theme: custom or unknown"
-        fi
+        [ -n "$current" ] && echo "Active theme: $current" || echo "Active theme: custom or unknown"
         echo
-        local i
+        local i fg
         for i in "${!names[@]}"; do
-            if [ "${names[$i]}" = "$current" ]; then
-                printf '  %d) %s (active)\n' "$((i + 1))" "${names[$i]}"
+            fg="$(awk -F= '$1=="foreground" {print $2; exit}' "${files[$i]}")"
+            if [[ "$fg" =~ ^#[[:xdigit:]]{6}$ ]]; then
+                printf '  \033[38;2;%d;%d;%dm%d) %s\033[0m' "$((16#${fg:1:2}))" "$((16#${fg:3:2}))" "$((16#${fg:5:2}))" "$((i + 1))" "${names[$i]}"
             else
-                printf '  %d) %s\n' "$((i + 1))" "${names[$i]}"
+                printf '  %d) %s' "$((i + 1))" "${names[$i]}"
             fi
+            [ "${names[$i]}" = "$current" ] && printf ' (active)'
+            printf '\n'
         done
         echo "  0) Cancel"
         printf 'Choose a theme number: '
-        if ! read -r choice; then
-            echo
-            echo "No selection made."
-            return 1
-        fi
+        if ! read -r choice; then echo; echo "No selection made."; return 1; fi
         [[ "$choice" =~ ^[0-9]+$ ]] || { echo "Please enter a number from 0 to ${#names[@]}."; return 1; }
+        choice=$((10#$choice))
         (( choice == 0 )) && { echo "Cancelled."; return 0; }
         (( choice >= 1 && choice <= ${#names[@]} )) || { echo "Invalid selection."; return 1; }
         name="${names[$((choice - 1))]}"
     fi
 
     file="$DATA/themes/$name.properties"
-    if [ ! -f "$file" ]; then
-        echo "Theme not found: $name"
-        echo "Run 'doterm list' to see available themes."
-        return 1
-    fi
+    if [ ! -f "$file" ]; then echo "Theme not found: $name"; echo "Run 'doterm list' to see available themes."; return 1; fi
 
-    # Refuse incomplete or malformed palettes before touching the active config.
-    local -a required=(background foreground cursor color0 color1 color2 color3 color4 color5 color6 color7 color8 color9 color10 color11 color12 color13 color14 color15)
-    local -A values=()
     while IFS='=' read -r key value || [ -n "$key$value" ]; do
         [[ "$key" =~ ^(background|foreground|cursor|color([0-9]|1[0-5]))$ ]] || continue
         values["$key"]="$value"
     done < "$file"
-
     for key in "${required[@]}"; do
         if [[ ! "${values[$key]+present}" || ! "${values[$key]}" =~ ^#[[:xdigit:]]{6}$ ]]; then
             echo "Theme is invalid: $name (missing or invalid $key)."
@@ -182,23 +170,44 @@ theme() {
         fi
     done
 
-    if [ -t 0 ] && [ -z "${1:-}" ]; then
-        preview "$name"
-        printf '\nApply this theme? [y/N] '
-        read -r answer || answer=""
-        case "$answer" in
-            y|Y|yes|YES|Yes) ;;
-            *) echo "Cancelled. Your current theme was not changed."; return 0 ;;
-        esac
-    fi
+    temp_dir="$(mktemp -d)"
+    if [ -f "$CONFIG/colors.properties" ]; then cp "$CONFIG/colors.properties" "$temp_dir/colors.properties"; had_colors=1; fi
+    preview_restore() {
+        if [ "$had_colors" -eq 1 ]; then
+            mkdir -p "$CONFIG"
+            cp "$temp_dir/colors.properties" "$CONFIG/colors.properties"
+        else
+            rm -f "$CONFIG/colors.properties"
+        fi
+        command -v termux-reload-settings >/dev/null 2>&1 && termux-reload-settings
+        rm -rf -- "$temp_dir"
+    }
+    trap 'preview_restore' INT TERM HUP
 
-    backup
     mkdir -p "$CONFIG"
     cp "$file" "$CONFIG/colors.properties"
     termux-reload-settings
-    echo "Theme applied: $name"
+    echo
+    echo "Temporarily applied: $name"
+    printf 'Keep this theme? [y/N] '
+    read -r answer || answer=""
+    case "$answer" in
+        y|Y|yes|YES|Yes)
+            if [ "$had_colors" -eq 1 ]; then cp "$temp_dir/colors.properties" "$CONFIG/colors.properties"; else rm -f "$CONFIG/colors.properties"; fi
+            backup
+            cp "$file" "$CONFIG/colors.properties"
+            termux-reload-settings
+            rm -rf -- "$temp_dir"
+            trap - INT TERM HUP
+            echo "Theme applied and saved: $name"
+            ;;
+        *)
+            preview_restore
+            trap - INT TERM HUP
+            echo "Cancelled. Your previous theme and settings have been restored."
+            ;;
+    esac
 }
-
 update() {
     (
         set -Eeuo pipefail
