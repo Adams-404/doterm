@@ -46,6 +46,18 @@ color15=#F0FFF6
 
 Theme filenames become the names used with `doterm theme`. For example, `themes/green-ghost.properties` is applied with `doterm theme green-ghost`. Green Ghost is Doterm's default theme for fresh installs; the installer must not overwrite an existing user's theme.
 
+## Validate themes locally
+
+The theme checker uses only Python's standard library, so no extra packages are needed. From the repository root, run:
+
+```bash
+python scripts/check-themes.py
+```
+
+The checker verifies that every `themes/*.properties` file contains `background`, `foreground`, `cursor`, and `color0` through `color15`; that required values are six-digit hexadecimal colors; and that keys are not duplicated. It reports the file and key for each problem and exits with a nonzero status if validation fails.
+
+GitHub Actions runs the same check automatically on pushes to `main` and on pull requests.
+
 ## Working on code
 
 1. Fork the repository and clone your fork.
@@ -55,8 +67,6 @@ Theme filenames become the names used with `doterm theme`. For example, `themes/
 5. Commit with a clear message and open a pull request against `main`.
 
 For shell changes, check syntax with `bash -n bin/doterm install.sh`. If you change installation behavior, test the installer carefully and confirm it does not unexpectedly modify existing user settings.
-
-An automated theme validator is tracked in [issue #1](https://github.com/Adams-404/doterm/issues/1). Until it is implemented, double-check that each theme includes every required key and valid hex colors.
 
 ## Pull requests
 
