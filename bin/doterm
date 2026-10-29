@@ -208,6 +208,64 @@ theme() {
             ;;
     esac
 }
+
+doctor() {
+    local failures=0 warnings=0 count=0 file key value
+    local -a required=(background foreground cursor color0 color1 color2 color3 color4 color5 color6 color7 color8 color9 color10 color11 color12 color13 color14 color15)
+    local -A values=()
+    pass() { printf '  [PASS] %s\n' "$1"; count=$((count + 1)); }
+    warn() { printf '  [WARN] %s\n' "$1"; warnings=$((warnings + 1)); count=$((count + 1)); }
+    fail() { printf '  [FAIL] %s\n' "$1"; failures=$((failures + 1)); count=$((count + 1)); }
+
+    echo "Doterm doctor (read-only)"
+    echo
+    if [[ -n "${PREFIX:-}" && -d "${PREFIX:-}/bin" ]] && command -v pkg >/dev/null 2>&1; then
+        pass "Termux environment detected"
+    else
+        fail "Termux environment not detected"
+        echo "         Run this command inside Termux."
+    fi
+    if [[ -x "$PREFIX/bin/doterm" ]]; then pass "doterm command installed"; else fail "doterm command missing or not executable"; fi
+    if [[ -x "$PREFIX/bin/font" ]]; then pass "font selector installed"; else fail "font selector missing or not executable"; fi
+
+    for file in FiraCode-Regular.ttf JetBrainsMonoNL-Regular.ttf; do
+        if [[ -s "$DATA/fonts/$file" ]]; then pass "Font present: $file"; else fail "Font missing or empty: $file"; fi
+    done
+
+    local themes=0 invalid=0
+    if [[ -d "$DATA/themes" ]]; then
+        for file in "$DATA"/themes/*.properties; do
+            [[ -f "$file" ]] || continue
+            themes=$((themes + 1))
+            values=()
+            while IFS='=' read -r key value || [[ -n "$key$value" ]]; do
+                [[ "$key" =~ ^(background|foreground|cursor|color([0-9]|1[0-5]))$ ]] || continue
+                values["$key"]="$value"
+            done < "$file"
+            for key in "${required[@]}"; do
+                if [[ ! "${values[$key]+present}" || ! "${values[$key]}" =~ ^#[[:xdigit:]]{6}$ ]]; then
+                    invalid=$((invalid + 1))
+                    break
+                fi
+            done
+        done
+    fi
+    if (( themes == 0 )); then fail "No bundled theme files found"
+    elif (( invalid > 0 )); then fail "$invalid of $themes themes have missing or invalid colors"
+    else pass "All $themes bundled themes have valid required colors"; fi
+
+    if [[ -f "$CONFIG/colors.properties" ]]; then pass "Active colors.properties exists"
+    else warn "No active colors.properties file"; echo "         Apply one with: doterm theme"; fi
+    if command -v termux-reload-settings >/dev/null 2>&1; then pass "termux-reload-settings available"
+    else warn "termux-reload-settings not found"; fi
+
+    echo
+    printf 'Checks: %d | Warnings: %d | Failures: %d\n' "$count" "$warnings" "$failures"
+    if (( failures > 0 )); then echo "Result: problems found."; return 1
+    elif (( warnings > 0 )); then echo "Result: usable, but review warnings."
+    else echo "Result: Doterm looks healthy."; fi
+}
+
 update() {
     (
         set -Eeuo pipefail
@@ -291,6 +349,7 @@ case "${1:-help}" in
     backup) backup ;;
     restore) restore ;;
     update) update ;;
+    doctor) doctor ;;
     list)
         echo "Fonts:"
         ls "$DATA/fonts"
@@ -310,6 +369,7 @@ case "${1:-help}" in
         echo "  doterm backup          Back up current settings"
         echo "  doterm restore         Restore the latest backup"
         echo "  doterm update          Update Doterm from GitHub"
+        echo "  doterm doctor          Check installation and theme health"
         ;;
     *)
         echo "Unknown command: $1"
