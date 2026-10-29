@@ -78,6 +78,48 @@ theme() {
     echo "Theme applied: $name"
 }
 
+update() {
+    (
+        set -Eeuo pipefail
+
+        if ! command -v git >/dev/null 2>&1; then
+            echo "Git is required to update Doterm."
+            echo "Install it with: pkg install git"
+            exit 1
+        fi
+
+        local temp_dir
+        temp_dir="$(mktemp -d)"
+        trap 'rm -rf -- "$temp_dir"' EXIT
+
+        echo "Checking for Doterm updates..."
+        if ! git clone --depth 1 --branch main https://github.com/Adams-404/doterm.git "$temp_dir/doterm"; then
+            echo "Update failed: could not download Doterm."
+            echo "Check your internet connection and try again."
+            exit 1
+        fi
+
+        local source="$temp_dir/doterm"
+        if [[ ! -f "$source/install.sh" ||
+              ! -f "$source/bin/doterm" ||
+              ! -f "$source/bin/font" ||
+              ! -d "$source/fonts" ||
+              ! -d "$source/themes" ||
+              ! -d "$source/licenses" ]]; then
+            echo "Update failed: the downloaded repository is incomplete."
+            exit 1
+        fi
+
+        echo "Installing the latest Doterm files..."
+        if ! bash "$source/install.sh"; then
+            echo "Update failed during installation."
+            echo "Your existing Termux settings should remain unchanged."
+            exit 1
+        fi
+        echo "Doterm update complete."
+    )
+}
+
 restore() {
     local latest
     local file
@@ -117,6 +159,7 @@ case "${1:-help}" in
     theme) shift; theme "${1:-}" ;;
     backup) backup ;;
     restore) restore ;;
+    update) update ;;
     list)
         echo "Fonts:"
         ls "$DATA/fonts"
@@ -134,6 +177,7 @@ case "${1:-help}" in
         echo "  doterm list            List available fonts and themes"
         echo "  doterm backup          Back up current settings"
         echo "  doterm restore         Restore the latest backup"
+        echo "  doterm update          Update Doterm from GitHub"
         ;;
     *)
         echo "Unknown command: $1"
