@@ -37,6 +37,16 @@ Install the latest version with:
 curl -fsSL https://raw.githubusercontent.com/Adams-404/doterm/main/install.sh | bash
 ```
 
+**Security note:** this downloads the installer and executes it immediately with Bash. Only run it if you trust the repository and have reviewed what it does. To inspect the script first, download it and open it in a text editor:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Adams-404/doterm/main/install.sh -o install-doterm.sh
+less install-doterm.sh
+bash install-doterm.sh
+```
+
+You can also inspect the repository source at [GitHub](https://github.com/Adams-404/doterm) before installing.
+
 Alternatively, clone the repository and run the installer locally:
 
 ```bash
@@ -45,7 +55,7 @@ cd doterm
 bash install.sh
 ```
 
-The installer places the commands in `$PREFIX/bin/` and the bundled fonts, themes, and licenses in `$PREFIX/share/doterm/`. On a fresh setup, it applies Green Ghost as the default theme. If `~/.termux/colors.properties` already exists, the installer preserves it.
+The installer places the `doterm` and `font` commands in `$PREFIX/bin/`, and the bundled fonts, themes, licenses, and version file in `$PREFIX/share/doterm/`. It validates required files and stages the assets before replacing the managed installation files; if replacement fails, it attempts to restore the previous managed files. On a fresh setup, it applies Green Ghost as the default theme. If `~/.termux/colors.properties` already exists, the installer preserves it. Installation and update require trust in the downloaded repository code.
 
 ## Usage
 
@@ -159,7 +169,7 @@ doterm update
 
 The updater downloads the latest `main` branch into a temporary directory, checks that the required files are present, and runs the installer. `doterm repair` uses the same download-and-validate approach to reinstall the managed files when an installation is incomplete. The temporary download is removed afterward. An update requires Git and an internet connection.
 
-The installer replaces Doterm's bundled commands, fonts, themes, and licenses. It preserves an existing `~/.termux/colors.properties` file, so your current theme is not replaced. If the download or repository checks fail, installation does not begin.
+The installer replaces Doterm's managed commands, fonts, themes, licenses, and version file. It preserves an existing `~/.termux/colors.properties` file, so your current theme is not replaced. It validates required source files and stages replacements before changing the installed files; if a replacement step fails, it attempts to roll back to the previous managed files. A failed download or source validation stops before installation begins.
 
 This currently tracks the latest code on `main`, not a versioned stable release. The updater does not yet provide cryptographic release verification. For a fresh installation, follow the instructions above.
 
