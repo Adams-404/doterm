@@ -55,6 +55,9 @@ done
 
 install -m 755 "$SOURCE_DIR/bin/doterm" "$PREFIX/bin/doterm"
 install -m 755 "$SOURCE_DIR/bin/font" "$PREFIX/bin/font"
+if [[ -f "$SOURCE_DIR/VERSION" ]]; then
+    install -m 644 "$SOURCE_DIR/VERSION" "$DATA_DIR/VERSION"
+fi
 
 # Set Green Ghost as the first-run default without replacing an existing user theme.
 if [[ ! -f "$CONFIG_DIR/colors.properties" ]]; then
