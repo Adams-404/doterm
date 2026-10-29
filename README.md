@@ -71,7 +71,13 @@ Open the interactive font selector:
 font
 ```
 
-Apply a theme by its name:
+Choose a theme interactively:
+
+```bash
+doterm theme
+```
+
+The picker shows the active bundled theme when it can be identified, lets you preview your selection, and asks for confirmation before applying it. Enter `0` to cancel. In non-interactive shells, `doterm theme` lists available themes instead. You can still apply a theme directly by name:
 
 ```bash
 doterm theme green-ghost
