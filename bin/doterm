@@ -51,6 +51,63 @@ font() {
     echo "Font changed to $file"
 }
 
+preview() {
+    local name="${1:-}"
+    local file key value
+    local background="" foreground="" cursor=""
+    local -a colors=()
+
+    if [ -z "$name" ]; then
+        echo "Usage: doterm preview NAME"
+        echo "Available themes:"
+        for file in "$DATA"/themes/*.properties; do
+            [ -f "$file" ] && basename "$file" .properties
+        done
+        return 1
+    fi
+
+    file="$DATA/themes/$name.properties"
+    if [ ! -f "$file" ]; then
+        echo "Theme not found: $name"
+        echo "Run 'doterm list' to see available themes."
+        return 1
+    fi
+
+    while IFS='=' read -r key value || [ -n "$key$value" ]; do
+        case "$key" in
+            background) background="$value" ;;
+            foreground) foreground="$value" ;;
+            cursor) cursor="$value" ;;
+            color[0-9]|color1[0-5]) colors+=("$value") ;;
+        esac
+    done < "$file"
+
+    printf '\nTheme preview: %s\n\n' "$name"
+    printf 'Background: %s    Foreground: %s    Cursor: %s\n' "$background" "$foreground" "$cursor"
+
+    if [[ "$background" =~ ^#[[:xdigit:]]{6}$ && "$foreground" =~ ^#[[:xdigit:]]{6}$ ]]; then
+        printf '  \033[48;2;%d;%d;%dm\033[38;2;%d;%d;%dm  Sample text: Doterm preview  \033[0m\n' \
+            "0x${background:1:2}" "0x${background:3:2}" "0x${background:5:2}" \
+            "0x${foreground:1:2}" "0x${foreground:3:2}" "0x${foreground:5:2}"
+    fi
+
+    printf '\nANSI palette:\n'
+    local i hex r g b
+    for i in "${!colors[@]}"; do
+        hex="${colors[$i]}"
+        if [[ "$hex" =~ ^#[[:xdigit:]]{6}$ ]]; then
+            r=$((16#${hex:1:2}))
+            g=$((16#${hex:3:2}))
+            b=$((16#${hex:5:2}))
+            printf '  %2d \033[48;2;%d;%d;%dm  \033[0m %s' "$i" "$r" "$g" "$b" "$hex"
+            if (( (i + 1) % 4 == 3 )); then printf '\n'; else printf '    '; fi
+        else
+            printf '  %2d [invalid color: %s]\n' "$i" "$hex"
+        fi
+    done
+    printf '\nPreview only. Your current Termux theme was not changed.\n'
+}
+
 theme() {
     local name="${1:-}"
     local file
