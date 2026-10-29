@@ -44,7 +44,7 @@ color14=#6BFFEA
 color15=#F0FFF6
 ```
 
-Theme filenames become the names used with `doterm theme`. For example, `themes/ghostroot.properties` is applied with `doterm theme ghostroot`.
+Theme filenames become the names used with `doterm theme`. For example, `themes/green-ghost.properties` is applied with `doterm theme green-ghost`. Green Ghost is Doterm's default theme for fresh installs; the installer must not overwrite an existing user's theme.
 
 ## Working on code
 
