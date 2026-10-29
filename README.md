@@ -11,6 +11,7 @@ Doterm is a modular command-line toolkit for customizing the Termux environment 
 ## Features
 
 - Switch between bundled terminal fonts.
+- Preview theme colors in the terminal before applying them.
 - Apply original Doterm color themes designed around readable foreground colors and a pure-black AMOLED background.
 - Use Green Ghost as the default theme on a fresh install, without overwriting an existing theme.
 - Back up supported Termux configuration files before changing fonts or themes.
@@ -81,6 +82,14 @@ doterm theme monochrome-steel
 doterm theme solar-flare
 doterm theme red-wedding
 ```
+
+Preview a theme without changing your current settings:
+
+```bash
+doterm preview green-ghost
+```
+
+The preview displays the theme's background, foreground, cursor, and ANSI color palette. It is read-only and does not create a backup or modify `~/.termux/colors.properties`.
 
 All seven themes use a pure-black (`#000000`) background. Each has its own foreground, cursor, and ANSI color palette.
 
