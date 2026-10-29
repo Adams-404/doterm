@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 REPO_URL="https://github.com/Adams-404/doterm.git"
 DATA_DIR="${PREFIX:-}/share/doterm"
+CONFIG_DIR="$HOME/.termux"
 TEMP_DIR=""
 
 cleanup() {
@@ -55,6 +56,16 @@ done
 install -m 755 "$SOURCE_DIR/bin/doterm" "$PREFIX/bin/doterm"
 install -m 755 "$SOURCE_DIR/bin/font" "$PREFIX/bin/font"
 
+# Set Green Ghost as the first-run default without replacing an existing user theme.
+if [[ ! -f "$CONFIG_DIR/colors.properties" ]]; then
+    mkdir -p "$CONFIG_DIR"
+    cp "$DATA_DIR/themes/green-ghost.properties" "$CONFIG_DIR/colors.properties"
+    if command -v termux-reload-settings >/dev/null 2>&1; then
+        termux-reload-settings
+    fi
+    printf 'Applied default theme: Green Ghost\n'
+fi
+
 printf '\nDoterm installed successfully.\n'
 printf 'Run: doterm help\n'
-printf 'Try: doterm list\n'
+printf 'Try: doterm theme green-ghost\n'
