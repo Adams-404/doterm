@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TMP="$(mktemp -d)"
 trap 'rm -rf -- "$TMP"' EXIT
 
+export DOTERM_TEST_TMP="$TMP"
 export PREFIX="$TMP/prefix"
 export HOME="$TMP/home"
 mkdir -p "$PREFIX/bin" "$PREFIX/share/doterm/fonts" "$PREFIX/share/doterm/themes" "$HOME/.termux" "$TMP/stubs"
@@ -14,7 +15,8 @@ cp "$ROOT"/fonts/*.ttf "$PREFIX/share/doterm/fonts/"
 cp "$ROOT"/themes/*.properties "$PREFIX/share/doterm/themes/"
 cp "$ROOT/VERSION" "$PREFIX/share/doterm/VERSION"
 printf '#!/usr/bin/env bash\nexit 0\n' > "$TMP/stubs/termux-reload-settings"
-chmod +x "$TMP/stubs/termux-reload-settings"
+printf '#!/usr/bin/env bash\nn=$(cat "$DOTERM_TEST_TMP/date-count" 2>/dev/null || echo 0)\nn=$((n + 1))\nprintf "%s\\n" "$n" > "$DOTERM_TEST_TMP/date-count"\nprintf "20261029-0000%02d\\n" "$n"' > "$TMP/stubs/date"
+chmod +x "$TMP/stubs/termux-reload-settings" "$TMP/stubs/date"
 export PATH="$TMP/stubs:$PATH"
 
 pass() { printf 'PASS: %s\n' "$1"; }
@@ -65,6 +67,7 @@ pass "theme applies successfully when confirmed"
 
 # Manifest restore restores files that existed and removes files absent at backup time.
 printf 'before-restore\n' > "$HOME/.termux/colors.properties"
+rm -f "$HOME/.termux/font.ttf"
 "$PREFIX/bin/doterm" backup >/dev/null
 manifest_backup="$(find "$HOME/.termux/backups/doterm" -mindepth 1 -maxdepth 1 -type d | sort | tail -n 1)"
 rm -f "$HOME/.termux/colors.properties" "$HOME/.termux/font.ttf"
@@ -75,7 +78,7 @@ grep -Fxq colors.properties "$manifest_backup/manifest" || fail "backup manifest
 pass "manifest restore restores and removes expected files"
 
 # Legacy backups restore files that are present without requiring a manifest.
-legacy="$HOME/.termux/backups/doterm/19990101-000000"
+legacy="$HOME/.termux/backups/doterm/29990101-000000"
 mkdir -p "$legacy"
 printf 'legacy-theme\n' > "$legacy/colors.properties"
 "$PREFIX/bin/doterm" restore >/dev/null
