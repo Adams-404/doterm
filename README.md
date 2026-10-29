@@ -1,5 +1,9 @@
 # Doterm
 
+<p align="center">
+  <img src="assets/doterm-logo.svg" alt="Doterm Green Ghost logo" width="220" />
+</p>
+
 **Make your Termux yours.**
 
 Doterm is a modular command-line toolkit for customizing the Termux environment with terminal fonts, color themes, and configuration backup and restoration.
