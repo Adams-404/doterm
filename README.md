@@ -58,6 +58,14 @@ List available fonts and themes:
 doterm list
 ```
 
+Check your Doterm installation with read-only diagnostics:
+
+```bash
+doterm doctor
+```
+
+The doctor checks the Termux environment, installed commands, bundled fonts, required theme colors, and settings reload command. It reports passes, warnings, and failures with basic next steps. It does not modify your configuration.
+
 Switch fonts:
 
 ```bash
