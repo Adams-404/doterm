@@ -8,6 +8,7 @@ Doterm is a modular command-line toolkit for customizing the Termux environment 
 
 - Switch between bundled terminal fonts.
 - Apply original Doterm color themes designed around readable foreground colors and a pure-black AMOLED background.
+- Use Green Ghost as the default theme on a fresh install, without overwriting an existing theme.
 - Back up supported Termux configuration files before changing fonts or themes.
 - Restore settings from the latest backup, including removing supported files that did not exist in the saved state.
 - List available fonts and themes.
@@ -35,7 +36,7 @@ cd doterm
 bash install.sh
 ```
 
-The installer places the commands in `$PREFIX/bin/` and the bundled fonts, themes, and licenses in `$PREFIX/share/doterm/`. It does not change your current terminal font or theme during installation.
+The installer places the commands in `$PREFIX/bin/` and the bundled fonts, themes, and licenses in `$PREFIX/share/doterm/`. On a fresh setup, it applies Green Ghost as the default theme. If `~/.termux/colors.properties` already exists, the installer preserves it.
 
 ## Usage
 
@@ -67,7 +68,7 @@ font
 Apply a theme by its name:
 
 ```bash
-doterm theme ghostroot
+doterm theme green-ghost
 doterm theme ice-cyan
 doterm theme afterbyte
 doterm theme violet-pulse
@@ -100,7 +101,7 @@ git pull
 bash install.sh
 ```
 
-To reinstall the latest version without keeping a clone, run the one-line installation command again.
+To reinstall the latest version without keeping a clone, run the one-line installation command again. Updating does not replace an existing terminal theme.
 
 ## Backups
 
@@ -119,7 +120,7 @@ Fonts:
 - JetBrains Mono NL Regular
 
 Original Doterm themes:
-- Ghostroot: vivid green
+- Green Ghost: luminous spectral green; default on a fresh install
 - Ice Cyan: crisp cyan
 - Afterbyte: warm amber
 - Violet Pulse: electric violet
