@@ -77,7 +77,7 @@ Choose a theme interactively:
 doterm theme
 ```
 
-The picker shows the active bundled theme when it can be identified, lets you preview your selection, and asks for confirmation before applying it. Enter `0` to cancel. In non-interactive shells, `doterm theme` lists available themes instead. You can still apply a theme directly by name:
+The picker displays each theme name in its foreground color and marks the active bundled theme when it can be identified. Selecting a theme temporarily applies it to Termux so you can see the full terminal colors, then asks whether to keep it. Answer `y` to save it or `n` to restore the previous configuration. Enter `0` to exit without previewing. In non-interactive shells, `doterm theme` lists available themes instead. You can also select a theme directly by name:
 
 ```bash
 doterm theme green-ghost
@@ -89,13 +89,13 @@ doterm theme solar-flare
 doterm theme red-wedding
 ```
 
-Preview a theme without changing your current settings:
+Print a theme's color palette without applying it:
 
 ```bash
 doterm preview green-ghost
 ```
 
-The preview displays the theme's background, foreground, cursor, and ANSI color palette. It is read-only and does not create a backup or modify `~/.termux/colors.properties`.
+The command displays the theme's background, foreground, cursor, and ANSI color palette as terminal samples. It is read-only and does not create a backup or modify `~/.termux/colors.properties`.
 
 All seven themes use a pure-black (`#000000`) background. Each has its own foreground, cursor, and ANSI color palette.
 
