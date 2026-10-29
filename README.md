@@ -18,6 +18,8 @@ Doterm is a modular command-line toolkit for customizing the Termux environment 
 - Restore settings from the latest backup, including removing supported files that did not exist in the saved state.
 - List available fonts and themes.
 - Update Doterm directly from Termux with `doterm update`.
+- Repair a broken or incomplete installation with `doterm repair`.
+- Uninstall Doterm without removing personal Termux settings or backups.
 - Keep the bundled fonts' license notices alongside the assets.
 
 ## Installation
@@ -65,6 +67,22 @@ doterm doctor
 ```
 
 The doctor checks the Termux environment, installed commands, bundled fonts, required theme colors, and settings reload command. It reports passes, warnings, and failures with basic next steps. It does not modify your configuration.
+
+Repair a missing or broken Doterm installation:
+
+```bash
+doterm repair
+```
+
+Repair downloads a clean copy of the latest `main` branch and runs the installer again. It restores Doterm commands and bundled assets, while preserving your existing active theme and other Termux settings. It requires Git and an internet connection.
+
+Uninstall Doterm:
+
+```bash
+doterm uninstall
+```
+
+The command shows what it will remove and asks for confirmation. It removes `$PREFIX/bin/doterm`, `$PREFIX/bin/font`, and `$PREFIX/share/doterm/`. Your `~/.termux/` configuration, active font and theme, and backups are preserved. Answer `n` or press Enter to cancel.
 
 Switch fonts:
 
@@ -127,7 +145,7 @@ Update Doterm directly from Termux:
 doterm update
 ```
 
-The updater downloads the latest `main` branch into a temporary directory, checks that the required files are present, and runs the installer. The temporary download is removed afterward. An update requires Git and an internet connection.
+The updater downloads the latest `main` branch into a temporary directory, checks that the required files are present, and runs the installer. `doterm repair` uses the same download-and-validate approach to reinstall the managed files when an installation is incomplete. The temporary download is removed afterward. An update requires Git and an internet connection.
 
 The installer replaces Doterm's bundled commands, fonts, themes, and licenses. It preserves an existing `~/.termux/colors.properties` file, so your current theme is not replaced. If the download or repository checks fail, installation does not begin.
 
