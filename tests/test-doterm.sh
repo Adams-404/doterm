@@ -11,6 +11,8 @@ export HOME="$TMP/home"
 mkdir -p "$PREFIX/bin" "$PREFIX/share/doterm/fonts" "$PREFIX/share/doterm/themes" "$HOME/.termux" "$TMP/stubs"
 cp "$ROOT/bin/doterm" "$PREFIX/bin/doterm"
 cp "$ROOT/bin/font" "$PREFIX/bin/font"
+# Use the runner Bash rather than Termux-specific shebangs in isolated tests.
+sed -i '1c#!/usr/bin/env bash' "$PREFIX/bin/doterm" "$PREFIX/bin/font"
 cp "$ROOT"/fonts/*.ttf "$PREFIX/share/doterm/fonts/"
 cp "$ROOT"/themes/*.properties "$PREFIX/share/doterm/themes/"
 cp "$ROOT/VERSION" "$PREFIX/share/doterm/VERSION"
