@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Doterm Green Ghost</title>
+  <desc id="desc">A spectral hooded ghost wrapped around a terminal prompt, drawn in neon green on a transparent background.</desc>
+  <defs>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B8FFD8"/>
+      <stop offset=".45" stop-color="#39FF88"/>
+      <stop offset="1" stop-color="#00B95B"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <g fill="none" stroke="url(#green)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M94 236a162 162 0 0 1 324 0" stroke-width="8" opacity=".9"/>
+    <path d="M92 236l-17 17m345-17 17 17M125 139l-16-10m278 10 16-10M153 99l-8-18m222 18 8-18" stroke-width="5"/>
+    <path d="M110 286c-24 28-20 58 1 73-20 30-3 61 22 66-7 25 14 43 39 41" stroke-width="6"/>
+    <path d="M402 286c24 28 20 58-1 73 20 30 3 61-22 66 7 25-14 43-39 41" stroke-width="6"/>
+  </g>
+  <path d="M256 47c-55 26-91 75-103 132-7 31-26 53-48 75-20 20-29 47-17 71 9 18 25 26 42 29-8 26 1 50 23 61-4 29 18 47 43 43 15-3 27-17 37-28-7 31-1 51 23 69 24-18 30-38 23-69 10 11 22 25 37 28 25 4 47-14 43-43 22-11 31-35 23-61 17-3 33-11 42-29 12-24 3-51-17-71-22-22-41-44-48-75-12-57-48-106-103-132Z" fill="#03130D" stroke="url(#green)" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M256 62c-44 27-72 66-83 116-8 36-33 60-53 81-15 16-22 36-13 51 7 12 20 18 35 19-13 22-6 42 14 52-3 22 11 35 28 32 17-3 32-22 45-37l-2 30c-2 22 7 39 29 56 22-17 31-34 29-56l-2-30c13 15 28 34 45 37 17 3 31-10 28-32 20-10 27-30 14-52 15-1 28-7 35-19 9-15 2-35-13-51-20-21-45-45-53-81-11-50-39-89-83-116Z" fill="#020907" stroke="#155A37" stroke-width="3"/>
+  <g filter="url(#glow)">
+    <path d="M174 222c18 2 35 10 49 23-20-5-33-3-49-23Z" fill="#B8FFD8"/>
+    <path d="M338 222c-18 2-35 10-49 23 20-5 33-3 49-23Z" fill="#B8FFD8"/>
+  </g>
+  <rect x="151" y="275" width="210" height="127" rx="13" fill="#020907" stroke="url(#green)" stroke-width="5"/>
+  <rect x="163" y="287" width="186" height="103" rx="7" fill="none" stroke="#145C38" stroke-width="2"/>
+  <path d="M190 319l24 18-24 18" fill="none" stroke="#39FF88" stroke-width="9" stroke-linecap="square" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="M236 356h30" stroke="#39FF88" stroke-width="8" stroke-linecap="square" filter="url(#glow)"/>
+  <path d="M180 414c-7 21-20 35-38 43m190-43c7 21 20 35 38 43" fill="none" stroke="url(#green)" stroke-width="5" stroke-linecap="round"/>
+</svg>
