@@ -16,7 +16,8 @@ Doterm is a modular command-line toolkit for customizing the Termux environment 
 - Use Green Ghost as the default theme on a fresh install, without overwriting an existing theme.
 - Back up supported Termux configuration files before changing fonts or themes.
 - Restore settings from the latest backup, including removing supported files that did not exist in the saved state.
-- List available fonts and themes.
+- List available fonts and themes with `doterm list`.
+- Inspect the active font, theme, installed assets, and version with `doterm status`.
 - Update Doterm directly from Termux with `doterm update`.
 - Repair a broken or incomplete installation with `doterm repair`.
 - Uninstall Doterm without removing personal Termux settings or backups.
@@ -59,6 +60,14 @@ List available fonts and themes:
 ```bash
 doterm list
 ```
+
+Check your current setup without changing anything:
+
+```bash
+doterm status
+```
+
+Status reports the installed Doterm version, identifies the active font when it matches a bundled font, and identifies the active theme when its configuration matches a bundled theme. Custom or unrecognized settings are labelled accordingly. Missing asset directories are reported by `doterm list` with a suggestion to run `doterm repair`.
 
 Check your Doterm installation with read-only diagnostics:
 
