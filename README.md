@@ -122,6 +122,9 @@ doterm theme violet-pulse
 doterm theme monochrome-steel
 doterm theme solar-flare
 doterm theme red-wedding
+doterm theme oxide-bloom
+doterm theme deep-current
+doterm theme paper-moon
 ```
 
 Print a theme's color palette without applying it:
@@ -132,7 +135,7 @@ doterm preview green-ghost
 
 The command displays the theme's background, foreground, cursor, and ANSI color palette as terminal samples. It is read-only and does not create a backup or modify `~/.termux/colors.properties`.
 
-All seven themes use a pure-black (`#000000`) background. Each has its own foreground, cursor, and ANSI color palette.
+All ten themes use a pure-black (`#000000`) background. The collection includes spectral green, crisp cyan, warm amber, electric violet, cool silver, golden yellow, crimson, copper ember, deep-sea teal, and warm lunar ivory palettes. The theme validator checks required properties, six-digit hex colors, duplicate keys, and the pure-black background rule.
 
 Back up your current supported settings:
 
@@ -183,7 +186,10 @@ Original Doterm themes:
 - Violet Pulse: electric violet
 - Monochrome Steel: cool silver
 - Solar Flare: luminous golden yellow
-- Red Wedding: regal crimson, inspired by the dramatic red-and-black aesthetic of *Game of Thrones*
+- Red Wedding: regal crimson
+- Oxide Bloom: copper and ember orange
+- Deep Current: deep-sea teal
+- Paper Moon: warm lunar ivory
 
 The bundled fonts retain their SIL Open Font License notices in `licenses/`.
 
