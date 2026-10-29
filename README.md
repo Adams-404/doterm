@@ -72,9 +72,11 @@ doterm theme ice-cyan
 doterm theme afterbyte
 doterm theme violet-pulse
 doterm theme monochrome-steel
+doterm theme solar-flare
+doterm theme red-wedding
 ```
 
-All five themes use a pure-black (`#000000`) background. Each has its own foreground, cursor, and ANSI color palette.
+All seven themes use a pure-black (`#000000`) background. Each has its own foreground, cursor, and ANSI color palette.
 
 Back up your current supported settings:
 
@@ -122,6 +124,8 @@ Original Doterm themes:
 - Afterbyte: warm amber
 - Violet Pulse: electric violet
 - Monochrome Steel: cool silver
+- Solar Flare: luminous golden yellow
+- Red Wedding: regal crimson, inspired by the dramatic red-and-black aesthetic of *Game of Thrones*
 
 The bundled fonts retain their SIL Open Font License notices in `licenses/`.
 
