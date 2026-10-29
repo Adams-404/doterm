@@ -7,7 +7,7 @@ Doterm is a modular command-line toolkit for customizing the Termux environment 
 ## Features
 
 - Switch between bundled terminal fonts.
-- Apply color themes.
+- Apply original Doterm color themes designed around readable foreground colors and a pure-black AMOLED background.
 - Back up supported Termux configuration files before changing fonts or themes.
 - Restore settings from the latest backup, including removing supported files that did not exist in the saved state.
 - List available fonts and themes.
@@ -64,15 +64,17 @@ Open the interactive font selector:
 font
 ```
 
-Apply a theme by its filename, without `.properties`:
+Apply a theme by its name:
 
 ```bash
-doterm theme green
-doterm theme nord
-doterm theme dracula
-doterm theme gruvbox-dark
-doterm theme catppuccin-mocha
+doterm theme ghostroot
+doterm theme ice-cyan
+doterm theme afterbyte
+doterm theme violet-pulse
+doterm theme monochrome-steel
 ```
+
+All five themes use a pure-black (`#000000`) background. Each has its own foreground, cursor, and ANSI color palette.
 
 Back up your current supported settings:
 
@@ -114,14 +116,14 @@ Fonts:
 - Fira Code Regular
 - JetBrains Mono NL Regular
 
-Themes:
-- Green
-- Nord
-- Dracula
-- Gruvbox Dark
-- Catppuccin Mocha
+Original Doterm themes:
+- Ghostroot: vivid green
+- Ice Cyan: crisp cyan
+- Afterbyte: warm amber
+- Violet Pulse: electric violet
+- Monochrome Steel: cool silver
 
-The bundled fonts retain their SIL Open Font License notices in `licenses/`. Theme names and palettes may belong to their respective projects; see their official resources for branding, attribution, and licensing guidance when redistributing or modifying them.
+The bundled fonts retain their SIL Open Font License notices in `licenses/`.
 
 ## Contributing
 
@@ -135,4 +137,4 @@ Doterm currently targets Termux on Android. It manages its bundled fonts and the
 
 Doterm's own code is licensed under the MIT License. See `LICENSE`.
 
-The bundled fonts are distributed under their respective licenses in `licenses/`. Check the relevant upstream terms before redistributing third-party theme palettes.
+The bundled fonts are distributed under their respective licenses in `licenses/`.
