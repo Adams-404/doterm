@@ -16,45 +16,47 @@ If you're unsure about an idea, open an issue first so we can discuss it before 
 1. Create a file in `themes/` with a lowercase, descriptive name and the `.properties` extension, for example `themes/my-theme.properties`.
 2. Use the Termux color keys shown below. Values should be six-digit hexadecimal colors prefixed with `#`.
 3. Include all 16 palette colors, from `color0` through `color15`, as well as `background`, `foreground`, and `cursor`.
-4. Use a consistent, readable foreground/background combination.
+4. Doterm's current theme collection uses a pure-black background (`background=#000000`) for AMOLED displays. Keep foreground text and the cursor easy to read.
 5. Update the README's bundled themes list if your theme is added to the project.
-6. If the palette is based on an existing theme, mention its name and follow its license and attribution requirements.
+6. If the palette is based on an existing theme, mention its origin and follow any applicable license and attribution requirements.
 
-Example:
+Example theme:
 
 ```properties
-background=#1e1e2e
-foreground=#cdd6f4
-cursor=#f5e0dc
-color0=#45475a
-color1=#f38ba8
-color2=#a6e3a1
-color3=#f9e2af
-color4=#89b4fa
-color5=#f5c2e7
-color6=#94e2d5
-color7=#bac2de
-color8=#585b70
-color9=#f38ba8
-color10=#a6e3a1
-color11=#f9e2af
-color12=#89b4fa
-color13=#f5c2e7
-color14=#94e2d5
-color15=#a6adc8
+background=#000000
+foreground=#39FF88
+cursor=#B8FFD8
+color0=#000000
+color1=#FF5C70
+color2=#39FF88
+color3=#D7FF5F
+color4=#5AA9FF
+color5=#D783FF
+color6=#45E6D3
+color7=#C9F7DE
+color8=#28513D
+color9=#FF7185
+color10=#65FF9F
+color11=#E7FF83
+color12=#7AB8FF
+color13=#E3A0FF
+color14=#6BFFEA
+color15=#F0FFF6
 ```
 
-Theme filenames become the names used with `doterm theme`. For example, `themes/catppuccin-mocha.properties` is applied with `doterm theme catppuccin-mocha`.
+Theme filenames become the names used with `doterm theme`. For example, `themes/ghostroot.properties` is applied with `doterm theme ghostroot`.
 
 ## Working on code
 
 1. Fork the repository and clone your fork.
-2. Make a branch for your change, such as `add-nord-theme` or `fix-backup-restore`.
+2. Make a branch for your change, such as `add-new-theme` or `fix-backup-restore`.
 3. Keep changes focused and avoid unrelated formatting or refactoring.
 4. Test the change in Termux when possible.
 5. Commit with a clear message and open a pull request against `main`.
 
 For shell changes, check syntax with `bash -n bin/doterm install.sh`. If you change installation behavior, test the installer carefully and confirm it does not unexpectedly modify existing user settings.
+
+An automated theme validator is tracked in [issue #1](https://github.com/Adams-404/doterm/issues/1). Until it is implemented, double-check that each theme includes every required key and valid hex colors.
 
 ## Pull requests
 
