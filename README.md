@@ -16,6 +16,7 @@ Doterm is a modular command-line toolkit for customizing the Termux environment 
 - Back up supported Termux configuration files before changing fonts or themes.
 - Restore settings from the latest backup, including removing supported files that did not exist in the saved state.
 - List available fonts and themes.
+- Update Doterm directly from Termux with `doterm update`.
 - Keep the bundled fonts' license notices alongside the assets.
 
 ## Installation
@@ -97,15 +98,17 @@ doterm restore
 
 ## Updating
 
-If you installed Doterm by cloning the repository, update it with:
+Update Doterm directly from Termux:
 
 ```bash
-cd doterm
-git pull
-bash install.sh
+doterm update
 ```
 
-To reinstall the latest version without keeping a clone, run the one-line installation command again. Updating does not replace an existing terminal theme.
+The updater downloads the latest `main` branch into a temporary directory, checks that the required files are present, and runs the installer. The temporary download is removed afterward. An update requires Git and an internet connection.
+
+The installer replaces Doterm's bundled commands, fonts, themes, and licenses. It preserves an existing `~/.termux/colors.properties` file, so your current theme is not replaced. If the download or repository checks fail, installation does not begin.
+
+This currently tracks the latest code on `main`, not a versioned stable release. The updater does not yet provide cryptographic release verification. For a fresh installation, follow the instructions above.
 
 ## Backups
 
