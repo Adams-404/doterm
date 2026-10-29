@@ -11,6 +11,7 @@ REQUIRED_KEYS = ("background", "foreground", "cursor") + tuple(
     f"color{i}" for i in range(16)
 )
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
+AMOLED_BACKGROUND = "#000000"
 
 
 def validate_theme(path: Path) -> list[str]:
@@ -49,6 +50,13 @@ def validate_theme(path: Path) -> list[str]:
     for key in REQUIRED_KEYS:
         if key not in values:
             errors.append(f"{path.relative_to(ROOT)}: missing required key '{key}'")
+
+    background = values.get("background")
+    if background and HEX_COLOR.fullmatch(background) and background.upper() != AMOLED_BACKGROUND:
+        errors.append(
+            f"{path.relative_to(ROOT)}: background must be {AMOLED_BACKGROUND} "
+            "to meet Doterm's pure-black AMOLED standard"
+        )
 
     return errors
 
