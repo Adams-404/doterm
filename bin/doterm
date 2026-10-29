@@ -390,6 +390,36 @@ uninstall() {
     echo "Doterm has been uninstalled. Your Termux settings and backups were preserved."
 }
 
+
+status() {
+    local file active_font="unknown" active_theme="custom or unknown" version="unversioned"
+    if [[ -f "$DATA/VERSION" ]]; then IFS= read -r version < "$DATA/VERSION" || version="unknown"; fi
+    echo "Doterm status"
+    echo
+    printf 'Version: %s\n' "$version"
+    if [[ -f "$CONFIG/font.ttf" ]]; then
+        if [[ -f "$DATA/fonts/FiraCode-Regular.ttf" ]] && cmp -s "$CONFIG/font.ttf" "$DATA/fonts/FiraCode-Regular.ttf"; then
+            active_font="Fira Code"
+        elif [[ -f "$DATA/fonts/JetBrainsMonoNL-Regular.ttf" ]] && cmp -s "$CONFIG/font.ttf" "$DATA/fonts/JetBrainsMonoNL-Regular.ttf"; then
+            active_font="JetBrains Mono NL"
+        else active_font="custom or unknown"; fi
+    else active_font="Termux default (no Doterm font file)"; fi
+    printf 'Font: %s\n' "$active_font"
+    if [[ -f "$CONFIG/colors.properties" ]]; then
+        for file in "$DATA"/themes/*.properties; do
+            [[ -f "$file" ]] || continue
+            if cmp -s "$file" "$CONFIG/colors.properties"; then active_theme="$(basename "$file" .properties)"; break; fi
+        done
+    else active_theme="not configured"; fi
+    printf 'Theme: %s\n' "$active_theme"
+    echo
+    local fonts=0 themes=0
+    if [[ -d "$DATA/fonts" ]]; then for file in "$DATA"/fonts/*.ttf; do [[ -f "$file" ]] && fonts=$((fonts + 1)); done; fi
+    if [[ -d "$DATA/themes" ]]; then for file in "$DATA"/themes/*.properties; do [[ -f "$file" ]] && themes=$((themes + 1)); done; fi
+    printf 'Installed fonts: %d\nInstalled themes: %d\n' "$fonts" "$themes"
+}
+
+
 case "${1:-help}" in
     font) shift; font "${1:-}" ;;
     theme) shift; theme "${1:-}" ;;
@@ -400,12 +430,33 @@ case "${1:-help}" in
     repair) repair ;;
     uninstall) uninstall ;;
     doctor) doctor ;;
+    status) status ;;
     list)
-        echo "Fonts:"
-        ls "$DATA/fonts"
+        echo "Doterm fonts:"
+        if [[ -d "$DATA/fonts" ]]; then
+            found=0
+            for file in "$DATA"/fonts/*.ttf; do
+                [[ -f "$file" ]] || continue
+                found=1
+                case "$(basename "$file")" in
+                    FiraCode-Regular.ttf) echo "  Fira Code (fira)" ;;
+                    JetBrainsMonoNL-Regular.ttf) echo "  JetBrains Mono NL (jetbrains)" ;;
+                    *) printf '  %s\n' "$(basename "$file" .ttf)" ;;
+                esac
+            done
+            if (( found == 0 )); then echo "  No font files found."; fi
+        else echo "  Font directory missing. Try: doterm repair"; fi
         echo
-        echo "Themes:"
-        ls "$DATA/themes"
+        echo "Doterm themes:"
+        if [[ -d "$DATA/themes" ]]; then
+            found=0
+            for file in "$DATA"/themes/*.properties; do
+                [[ -f "$file" ]] || continue
+                found=1
+                printf '  %s\n' "$(basename "$file" .properties)"
+            done
+            if (( found == 0 )); then echo "  No theme files found."; fi
+        else echo "  Theme directory missing. Try: doterm repair"; fi
         ;;
     help|--help|-h)
         echo "Doterm - Make your terminal yours"
@@ -416,6 +467,7 @@ case "${1:-help}" in
         echo "  doterm theme [NAME]    Pick or apply a theme"
         echo "  doterm preview NAME    Preview a theme without applying it"
         echo "  doterm list            List available fonts and themes"
+        echo "  doterm status          Show active font, theme, and version"
         echo "  doterm backup          Back up current settings"
         echo "  doterm restore         Restore the latest backup"
         echo "  doterm update          Update Doterm from GitHub"
