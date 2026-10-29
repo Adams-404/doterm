@@ -295,7 +295,7 @@ case "${1:-help}" in
         echo "Commands:"
         echo "  doterm font fira       Switch to Fira Code"
         echo "  doterm font jetbrains  Switch to JetBrains Mono NL"
-        echo "  doterm theme NAME      Apply a theme"
+        echo "  doterm theme [NAME]    Pick or apply a theme"
         echo "  doterm preview NAME    Preview a theme without applying it"
         echo "  doterm list            List available fonts and themes"
         echo "  doterm backup          Back up current settings"
