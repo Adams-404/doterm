@@ -64,10 +64,14 @@ Open the interactive font selector:
 font
 ```
 
-Apply a theme:
+Apply a theme by its filename, without `.properties`:
 
 ```bash
 doterm theme green
+doterm theme nord
+doterm theme dracula
+doterm theme gruvbox-dark
+doterm theme catppuccin-mocha
 ```
 
 Back up your current supported settings:
@@ -106,22 +110,29 @@ Each new backup includes a manifest recording which supported configuration file
 
 ## Bundled assets
 
+Fonts:
 - Fira Code Regular
 - JetBrains Mono NL Regular
-- Green color theme
 
-The bundled fonts retain their SIL Open Font License notices in `licenses/`.
+Themes:
+- Green
+- Nord
+- Dracula
+- Gruvbox Dark
+- Catppuccin Mocha
+
+The bundled fonts retain their SIL Open Font License notices in `licenses/`. Theme names and palettes may belong to their respective projects; see their official resources for branding, attribution, and licensing guidance when redistributing or modifying them.
+
+## Contributing
+
+Contributions are welcome, including new themes, bug fixes, documentation improvements, and feature ideas. Read [CONTRIBUTING.md](CONTRIBUTING.md) for the theme format and contribution workflow. GitHub issue and pull request templates are available to help make reports and proposed changes easier to review.
 
 ## Limitations
 
 Doterm currently targets Termux on Android. It manages its bundled fonts and themes and backs up the supported configuration files listed by the tool. It does not manage every Termux setting.
 
-## Contributing
-
-Issues, suggestions, and pull requests are welcome.
-
 ## License
 
 Doterm's own code is licensed under the MIT License. See `LICENSE`.
 
-The bundled fonts are distributed under their respective licenses in `licenses/`.
+The bundled fonts are distributed under their respective licenses in `licenses/`. Check the relevant upstream terms before redistributing third-party theme palettes.
