@@ -342,6 +342,54 @@ restore() {
     echo "Restore complete."
 }
 
+
+repair() {
+    (
+        set -Eeuo pipefail
+        if ! command -v git >/dev/null 2>&1; then
+            echo "Git is required to repair Doterm."
+            echo "Install it with: pkg install git"
+            exit 1
+        fi
+        local temp_dir source
+        temp_dir="$(mktemp -d)"
+        trap 'rm -rf -- "$temp_dir"' EXIT
+        echo "Downloading a clean copy of Doterm..."
+        if ! git clone --depth 1 --branch main https://github.com/Adams-404/doterm.git "$temp_dir/doterm"; then
+            echo "Repair failed: could not download Doterm."
+            exit 1
+        fi
+        source="$temp_dir/doterm"
+        if [[ ! -f "$source/install.sh" || ! -f "$source/bin/doterm" || ! -f "$source/bin/font" || ! -d "$source/fonts" || ! -d "$source/themes" || ! -d "$source/licenses" ]]; then
+            echo "Repair failed: the downloaded repository is incomplete."
+            exit 1
+        fi
+        echo "Repairing Doterm files..."
+        bash "$source/install.sh"
+        echo "Repair complete. Your existing Termux settings and Doterm backups were preserved."
+    )
+}
+
+uninstall() {
+    local answer
+    echo "This will remove the following Doterm-managed files:"
+    echo "  - $PREFIX/bin/doterm"
+    echo "  - $PREFIX/bin/font"
+    echo "  - $PREFIX/share/doterm/ (bundled fonts, themes, and licenses)"
+    echo
+    echo "Your ~/.termux settings, active theme, font, and backups will be kept."
+    printf 'Uninstall Doterm? [y/N] '
+    read -r answer || answer=""
+    case "$answer" in
+        y|Y|yes|YES|Yes) ;;
+        *) echo "Cancelled. Nothing was removed."; return 0 ;;
+    esac
+
+    rm -f -- "$PREFIX/bin/doterm" "$PREFIX/bin/font"
+    rm -rf -- "$PREFIX/share/doterm"
+    echo "Doterm has been uninstalled. Your Termux settings and backups were preserved."
+}
+
 case "${1:-help}" in
     font) shift; font "${1:-}" ;;
     theme) shift; theme "${1:-}" ;;
@@ -349,6 +397,8 @@ case "${1:-help}" in
     backup) backup ;;
     restore) restore ;;
     update) update ;;
+    repair) repair ;;
+    uninstall) uninstall ;;
     doctor) doctor ;;
     list)
         echo "Fonts:"
@@ -369,6 +419,8 @@ case "${1:-help}" in
         echo "  doterm backup          Back up current settings"
         echo "  doterm restore         Restore the latest backup"
         echo "  doterm update          Update Doterm from GitHub"
+        echo "  doterm repair          Repair/reinstall Doterm files"
+        echo "  doterm uninstall       Remove Doterm, keeping your settings"
         echo "  doterm doctor          Check installation and theme health"
         ;;
     *)
