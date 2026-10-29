@@ -2,36 +2,40 @@
 
 **Make your Termux yours.**
 
-Doterm is a lightweight command-line tool for personalizing Termux with custom fonts, color themes, and configuration backups.
+Doterm is a modular command-line toolkit for customizing the Termux environment with terminal fonts, color themes, and configuration backup and restoration.
 
 ## Features
 
-- Switch between bundled fonts.
+- Switch between bundled terminal fonts.
 - Apply color themes.
-- Back up your current Termux settings.
-- Restore settings from a backup.
+- Back up supported Termux configuration files before changing fonts or themes.
+- Restore settings from the latest backup, including removing supported files that did not exist in the saved state.
 - List available fonts and themes.
-- Keep font licenses alongside the bundled fonts.
+- Keep the bundled fonts' license notices alongside the assets.
 
 ## Installation
 
-Clone the repository:
+Doterm is designed for Termux on Android. Make sure Git and curl are available:
 
 ```bash
-git clone git@github.com:Adams-404/doterm.git
+pkg install git curl
+```
+
+Install the latest version with:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Adams-404/doterm/main/install.sh | bash
+```
+
+Alternatively, clone the repository and run the installer locally:
+
+```bash
+git clone https://github.com/Adams-404/doterm.git
 cd doterm
+bash install.sh
 ```
 
-Install Doterm and its bundled assets:
-
-```bash
-mkdir -p "$PREFIX/share/doterm"
-cp -r fonts themes "$PREFIX/share/doterm/"
-install -Dm755 bin/doterm "$PREFIX/bin/doterm"
-install -Dm755 bin/font "$PREFIX/bin/font"
-```
-
-These commands assume you are running Termux and have cloned the repository.
+The installer places the commands in `$PREFIX/bin/` and the bundled fonts, themes, and licenses in `$PREFIX/share/doterm/`. It does not change your current terminal font or theme during installation.
 
 ## Usage
 
@@ -66,7 +70,7 @@ Apply a theme:
 doterm theme green
 ```
 
-Back up your current settings:
+Back up your current supported settings:
 
 ```bash
 doterm backup
@@ -78,6 +82,18 @@ Restore the latest backup:
 doterm restore
 ```
 
+## Updating
+
+If you installed Doterm by cloning the repository, update it with:
+
+```bash
+cd doterm
+git pull
+bash install.sh
+```
+
+To reinstall the latest version without keeping a clone, run the one-line installation command again.
+
 ## Backups
 
 Doterm stores backups under:
@@ -86,9 +102,7 @@ Doterm stores backups under:
 ~/.termux/backups/doterm/
 ```
 
-Each new backup includes a manifest recording which supported configuration files existed when the backup was made. Restore uses that manifest to restore the saved files and remove supported configuration files that were absent from the backup.
-
-Older backups without a manifest are restored in compatibility mode.
+Each new backup includes a manifest recording which supported configuration files existed when the backup was made. Restore uses that manifest to restore saved files and remove supported configuration files that were absent from the backup. Older backups without a manifest are restored in compatibility mode.
 
 ## Bundled assets
 
@@ -96,11 +110,11 @@ Older backups without a manifest are restored in compatibility mode.
 - JetBrains Mono NL Regular
 - Green color theme
 
-The bundled fonts retain their original SIL Open Font License notices in `licenses/`.
+The bundled fonts retain their SIL Open Font License notices in `licenses/`.
 
 ## Limitations
 
-Doterm currently targets Termux on Android. The bundled fonts and themes are copied into Termux's configuration directories. Existing settings are backed up before font and theme changes.
+Doterm currently targets Termux on Android. It manages its bundled fonts and themes and backs up the supported configuration files listed by the tool. It does not manage every Termux setting.
 
 ## Contributing
 
