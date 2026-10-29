@@ -1,0 +1,143 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -e
+
+DATA="$PREFIX/share/doterm"
+CONFIG="$HOME/.termux"
+BACKUPS="$CONFIG/backups/doterm"
+CONFIG_FILES="font.ttf colors.properties termux.properties"
+
+backup() {
+    local file
+    local dest="$BACKUPS/$(date +%Y%m%d-%H%M%S)"
+
+    mkdir -p "$dest"
+    : > "$dest/manifest"
+
+    for file in $CONFIG_FILES; do
+        if [ -f "$CONFIG/$file" ]; then
+            cp "$CONFIG/$file" "$dest/$file"
+            printf '%s\n' "$file" >> "$dest/manifest"
+        fi
+    done
+
+    echo "Backup saved: $dest"
+}
+
+font() {
+    local file
+
+    case "${1:-}" in
+        fira|fira-code)
+            file="FiraCode-Regular.ttf"
+            ;;
+        jetbrains|jetbrains-mono)
+            file="JetBrainsMonoNL-Regular.ttf"
+            ;;
+        *)
+            echo "Usage: doterm font {fira|jetbrains}"
+            return 1
+            ;;
+    esac
+
+    if [ ! -f "$DATA/fonts/$file" ]; then
+        echo "Font not installed: $file"
+        return 1
+    fi
+
+    backup
+    mkdir -p "$CONFIG"
+    cp "$DATA/fonts/$file" "$CONFIG/font.ttf"
+    termux-reload-settings
+    echo "Font changed to $file"
+}
+
+theme() {
+    local name="${1:-}"
+    local file
+
+    if [ -z "$name" ]; then
+        echo "Usage: doterm theme NAME"
+        echo "Available themes:"
+        for file in "$DATA"/themes/*.properties; do
+            [ -f "$file" ] && basename "$file" .properties
+        done
+        return 1
+    fi
+
+    file="$DATA/themes/$name.properties"
+
+    if [ ! -f "$file" ]; then
+        echo "Theme not found: $name"
+        return 1
+    fi
+
+    backup
+    mkdir -p "$CONFIG"
+    cp "$file" "$CONFIG/colors.properties"
+    termux-reload-settings
+    echo "Theme applied: $name"
+}
+
+restore() {
+    local latest
+    local file
+
+    latest="$(ls -1dt "$BACKUPS"/*/ 2>/dev/null | head -n 1 || true)"
+
+    if [ -z "$latest" ] || [ ! -d "$latest" ]; then
+        echo "No Doterm backups found."
+        return 1
+    fi
+
+    if [ ! -f "$latest/manifest" ]; then
+        echo "This is an older backup without a manifest."
+        echo "Restoring files available in that backup only."
+        for file in $CONFIG_FILES; do
+            [ ! -f "$latest/$file" ] || cp "$latest/$file" "$CONFIG/$file"
+        done
+    else
+        echo "Restoring from: $latest"
+        mkdir -p "$CONFIG"
+
+        for file in $CONFIG_FILES; do
+            if grep -Fxq "$file" "$latest/manifest"; then
+                cp "$latest/$file" "$CONFIG/$file"
+            else
+                rm -f "$CONFIG/$file"
+            fi
+        done
+    fi
+
+    termux-reload-settings
+    echo "Restore complete."
+}
+
+case "${1:-help}" in
+    font) shift; font "${1:-}" ;;
+    theme) shift; theme "${1:-}" ;;
+    backup) backup ;;
+    restore) restore ;;
+    list)
+        echo "Fonts:"
+        ls "$DATA/fonts"
+        echo
+        echo "Themes:"
+        ls "$DATA/themes"
+        ;;
+    help|--help|-h)
+        echo "Doterm - Make your terminal yours"
+        echo
+        echo "Commands:"
+        echo "  doterm font fira       Switch to Fira Code"
+        echo "  doterm font jetbrains  Switch to JetBrains Mono NL"
+        echo "  doterm theme NAME      Apply a theme"
+        echo "  doterm list            List available fonts and themes"
+        echo "  doterm backup          Back up current settings"
+        echo "  doterm restore         Restore the latest backup"
+        ;;
+    *)
+        echo "Unknown command: $1"
+        echo "Run 'doterm help' for usage."
+        exit 1
+        ;;
+esac

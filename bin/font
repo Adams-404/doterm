@@ -1,0 +1,12 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+echo "Choose your terminal font:"
+PS3="Font number (1-2, or Ctrl+C to cancel): "
+
+select choice in "Fira Code" "JetBrains Mono NL"; do
+    case "$REPLY" in
+        1) doterm font fira; break ;;
+        2) doterm font jetbrains; break ;;
+        *) echo "Choose 1 or 2." ;;
+    esac
+done
